@@ -1,4 +1,5 @@
 import graphene
+
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
@@ -6,7 +7,10 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 from polls.models import Question, Choice
 
+
 from graphql_tutorial.custom_filters import QuestionFilter
+from graphql_tutorial.permission_decorator import permission_required
+from graphql_tutorial.custom_permission import is_authenticated
 
 
 class ChoiceType(DjangoObjectType):
@@ -95,8 +99,13 @@ class DeleteQuestion(graphene.relay.ClientIDMutation):
     question = graphene.Field(QuestionType)
     ok = graphene.Boolean()
 
+
     @classmethod
     def mutate_and_get_payload(cls, root, info, **kwargs):
+
+        if not is_authenticated(info.context.user):
+            raise Exception("Permission Denied")
+
         id = kwargs.get('client_mutation_id', None)
         id = from_global_id(id)[1]
         obj = Question.objects.get(id=id)
@@ -119,12 +128,15 @@ class Query(graphene.ObjectType):
     choices = graphene.relay.ConnectionField(ChoiceConnection)
     choice = graphene.relay.Node.Field(ChoiceType)
 
+    @permission_required(is_authenticated)
     def resolve_questions(self, info, **kwargs):
         return Question.objects.all()
 
+    @permission_required(is_authenticated)
     def resolve_question(self, info, id):
         return Question.objects.get(id=id)
 
+    @permission_required(is_authenticated)
     def resolve_choices(self, info, **kwargs):
         return Choice.objects.all()
 

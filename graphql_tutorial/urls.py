@@ -20,9 +20,10 @@ from django.urls import include, path
 from graphene_django.views import GraphQLView
 
 from graphql_tutorial.schema import schema
-
+#from graphql_tutorial.views import PrivateGrpahQLView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('o/', include('oauth2_provider.urls'), name="oauth2_provider"),
     path('graphql/', GraphQLView.as_view(graphiql=True, schema=schema))
 ]
