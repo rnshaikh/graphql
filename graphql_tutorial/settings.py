@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_filters',
+    'oauth2_provider',
     'user',
     'polls',
 ]
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'oauth2_provider.middleware.OAuth2TokenMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -127,3 +129,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "user.User"
+
+
+OAUTH2_PROVIDER_ACCESS_TOKEN_MODEL = "oauth2_provider.AccessToken"
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
+
+
+OAUTH2_PROVIDER = {
+    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
+    "REFRESH_TOKEN_EXPIRE_SECONDS": 3600,
+    "REFRESH_TOKEN_GRACE_PERIOD_SECONDS": 3600
+}
+
+OIDC_ENABLED = False
+
+OAUTH2_CLIENT_ID = "Mi9xL3B86Im8H0qVnzSGzXYHn1XEFRwyuzXFq2O3"
+OAUTH2_CLIENT_SECRET = "799kBpDxvdGie6U8HY7LsBzveRqNI4Tt5TMgzR8DA04SbN5Xg5ss0naGlAjXBGaTIxuEBD2X1UDvrhS5XdNTo6Fl9Hz14L9UKTRqOpfveZuapx2VlP2ThOvPkfnuaug0"
+
+
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend",
+                           "oauth2_provider.backends.OAuth2Backend"]
